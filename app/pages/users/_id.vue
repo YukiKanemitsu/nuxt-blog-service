@@ -44,6 +44,7 @@
 <script>
 import moment from '~/plugins/moment'
 import { mapGetters } from 'vuex'
+
 export default {
   async asyncData({ store, route, error }) {
     const { id } = route.params

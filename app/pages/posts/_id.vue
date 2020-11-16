@@ -13,6 +13,30 @@
 				<p>
 					{{ post.body }}
 				</p>
+
+				<no-ssr>
+					<p class="text-right">
+						<el-button 
+							:disabled="!isLoggendIn" 
+							type="warning"
+							v-if="isLiked"
+							@click="unlike" 
+							round>
+							<span class="el-icon-star-on" />
+							<span>{{ post.likes.length }}</span>
+						</el-button>
+						<el-button 
+							:disabled="!isLoggendIn" 
+							type="warning"
+							v-else
+							@click="like" 
+							round>
+							<span class="el-icon-star-off" />
+							<span>{{ post.likes.length }}</span>
+						</el-button>
+					</p>
+				</no-ssr>
+				
 				<p class="text-right">
 					{{ post.create_at | time }}
 				</p>
@@ -29,27 +53,41 @@
 <script>
 import moment from '~/plugins/moment'
 import { mapGetters, mapActions } from 'vuex'
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
 	async asyncData({ store, route, error }) {
-		const { id } = route.params
-		if (store.getters['posts/posts'].find(p => p.id === id)) {
+		// const { id } = route.params
+		if (store.getters['posts/posts'].find(p => p.id === route.params.id)) {
 			return
 		}
-		try {
-			await store.dispatch('posts/fetchPost', { id })
-			if (!(store.getters['posts/posts'].find(p => p.id === this.$route.params.id))) {
-				throw new Error('post not found')				
-			}
-		} catch (e) {
-			error({ statusCode: 404 })
-		}
+		await store.dispatch('posts/fetchPosts')
 	},
+	// 	try {
+	// 		await store.dispatch('posts/fetchPost', { id })
+	// 		if (!(store.getters['posts/posts'].find(p => p.id === this.$route.params.id))) {
+	// 			throw new Error('post not found')				
+	// 		}
+	// 	} catch (e) {
+	// 		error({ statusCode: 404 })
+	// 	}
+	// },
 	computed: {
 		post() {
 			return this.posts.find(p => p.id === this.$route.params.id)
 		},
+		isLiked() {
+			if (!this.user) return false
+		},
+		...mapGetters(['user', 'isLoggedIn']),
 		...mapGetters('posts', ['posts'])
+	},
+	methods: {
+		like() {
+			if (condition) {
+				
+			}
+		}
 	},
 	filters: {
 		time(val) {
